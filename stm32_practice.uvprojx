@@ -339,7 +339,7 @@
               <MiscControls>--no-multibyte-chars</MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\User;.\Libraries;.\Hardware\OLED;.\Hardware\Key</IncludePath>
+              <IncludePath>.\Start;.\User;.\Libraries;.\System;.\Hardware\OLED;.\Hardware\Key;.\Hardware\LED;.\System</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -651,37 +651,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Hardware</GroupName>
+          <GroupName>System</GroupName>
           <Files>
             <File>
-              <FileName>Key.c</FileName>
+              <FileName>Time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Hardware\Key\Key.c</FilePath>
+              <FilePath>.\System\Time.c</FilePath>
             </File>
             <File>
-              <FileName>Key.h</FileName>
+              <FileName>Time.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Hardware\Key\Key.h</FilePath>
-            </File>
-            <File>
-              <FileName>OLED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\OLED\OLED.c</FilePath>
-            </File>
-            <File>
-              <FileName>OLED.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\OLED\OLED.h</FilePath>
-            </File>
-            <File>
-              <FileName>OLED_Data.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\OLED\OLED_Data.c</FilePath>
-            </File>
-            <File>
-              <FileName>OLED_Data.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\OLED\OLED_Data.h</FilePath>
+              <FilePath>.\System\Time.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -707,6 +687,41 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\User\stm32f10x_it.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Hardware</GroupName>
+          <Files>
+            <File>
+              <FileName>Key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Key\Key.c</FilePath>
+            </File>
+            <File>
+              <FileName>Key.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Key\Key.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LED\LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LED\LED.h</FilePath>
             </File>
           </Files>
         </Group>
