@@ -15,7 +15,7 @@
 
 
 # --- 工程文件与配置 ---
-#*.uvoptx 
+*.uvoptx 
 *.uvguix.*  
 *.bak 
 *.crf
