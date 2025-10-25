@@ -1,18 +1,13 @@
 #include "stm32f10x.h"                  // Device header
-#include "Key.h"
+#include "Delay.h"
 #include "OLED.h"
-#include "LED.h"
-#include "Time.h"
-#include "Menu.h"
 
 
 int main(void)
 {
 	
 	OLED_Init();
-	Time_Init();
-	Key_Init();
-	//LED_Init();
+
 
 	OLED_Clear();
 	OLED_Update();
@@ -20,18 +15,16 @@ int main(void)
 
 	while(1)
 	{
-		Main_Menu();
+		OLED_Clear();
+		OLED_DrawCircle(20, 20, 10, 1);
+		OLED_Update();
+		Delay_ms(500);
+		
+		OLED_Clear();
+		OLED_DrawCircle(40, 40, 10, 0);
+		OLED_Update();
+		Delay_ms(500);
 	}
 
 }
 
-
-// 中断服务函数模板
-void TIM2_IRQHandler(void)
-{
-	if (TIM_GetITStatus(TIM2,TIM_IT_Update) == SET) {
-		Key_Tick();
-		//LED_Tick();
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update); // 清除中断标志
-	}
-}
