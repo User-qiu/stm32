@@ -339,7 +339,7 @@
               <MiscControls>--no-multibyte-chars</MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\User;.\Libraries;.\System;.\Hardware\OLED;.\Hardware\Key;.\Hardware\LED;.\App\Menu</IncludePath>
+              <IncludePath>.\Start;.\User;.\Libraries;.\System;.\Hardware\OLED;.\Hardware\Key;.\Hardware\LED;.\App\Menu;.\Hardware\MPU</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -742,6 +742,31 @@
               <FileName>OLED_Data.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED\OLED_Data.h</FilePath>
+            </File>
+            <File>
+              <FileName>MPU6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\MPU\MPU6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>MPU6050.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MPU\MPU6050.h</FilePath>
+            </File>
+            <File>
+              <FileName>MyI2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\MPU\MyI2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>MyI2C.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MPU\MyI2C.h</FilePath>
+            </File>
+            <File>
+              <FileName>MPU6050_Reg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MPU\MPU6050_Reg.h</FilePath>
             </File>
           </Files>
         </Group>
