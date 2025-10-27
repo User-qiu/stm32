@@ -62,7 +62,7 @@ void MPU6050_Init(void)
 	MPU6050_WriteReg(MPU6050_SMPLRT_DIV, 0x09);		//采样率分频寄存器，配置采样率
 	MPU6050_WriteReg(MPU6050_CONFIG, 0x06);			//配置寄存器，配置DLPF
 	MPU6050_WriteReg(MPU6050_GYRO_CONFIG, 0x18);	//陀螺仪配置寄存器，选择满量程为±2000°/s
-	MPU6050_WriteReg(MPU6050_ACCEL_CONFIG, 0x18);	//加速度计配置寄存器，选择满量程为±16g
+	MPU6050_WriteReg(MPU6050_ACCEL_CONFIG, 0x00);	//加速度计配置寄存器，选择满量程为±2g
 }
 
 /**
