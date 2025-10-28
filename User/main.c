@@ -1,6 +1,7 @@
 #include "stm32f10x.h"                  // Device header
 #include "OLED.h"
 #include "Time.h"
+#include "Serial.h"
 #include "MPU6050.h"
 #include "MPU6050_pose_calculate.h"
 
@@ -11,6 +12,7 @@ float Roll,Pitch,Yaw;
 int main(void)
 {
 	OLED_Init();
+	Serial_Init();
 	
 	/*
 	首先MPU6050初始化，
@@ -43,6 +45,8 @@ int main(void)
 		OLED_ShowFloatNum(0+48, (2-1)*16, Roll,  3,3, OLED_8X16);
 		OLED_ShowFloatNum(0+48, (3-1)*16, Pitch, 3,3,  OLED_8X16);
 		OLED_ShowFloatNum(0+48, (4-1)*16, Yaw,   3,3,  OLED_8X16);
+		
+		Serial_Printf("%.3f,%.3f,%.3f\n",Roll,Pitch,Yaw);
 		
 		OLED_Update();
 		
