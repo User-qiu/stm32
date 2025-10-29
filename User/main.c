@@ -24,7 +24,7 @@ int main(void)
 	OLED_Clear();
 	OLED_ShowString(1, 1, "MPU校准中", OLED_8X16);
 	OLED_Update();
-	MPU6050_CalibrateSensors();
+	MPU6050_pose_claculate_Init();
 	OLED_Clear();
 	
 	

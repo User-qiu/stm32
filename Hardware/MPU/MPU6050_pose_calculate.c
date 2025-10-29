@@ -1,13 +1,10 @@
 #include "stm32f10x.h"                  // Device header
 #include "MPU6050.h"
 #include "Math.h"
+#include "MPU6050_pose_calculate.h"
+#include "MPU6050_Kalman_Filter.h"
 #include "Delay.h"
 
-//融合互补计算的系数
-//#define ALPHA 0.95238
-
-//自己测试得到的勉强可用
-#define ALPHA 0.001
 
 //MPU6050原始数值
 int16_t AX, AY, AZ;							//加速度原始数值
@@ -23,6 +20,8 @@ float GX_Handle, GY_Handle, GZ_Handle;		//处理后的陀螺仪数值，单位°
 float Yaw_g, Pitch_g, Roll_g;  				//计算出的陀螺仪角度
 float Yaw_a, Pitch_a, Roll_a;				//计算出的加速度计角度
 
+// 定义卡尔曼滤波器实例
+KalmanFilter kalman_pitch, kalman_roll;
 
 
 //最终求得的横滚角、俯仰角、偏航角
@@ -38,6 +37,41 @@ typedef struct {
 static SensorCalibration gyro_calib = {0};
 static SensorCalibration accel_calib = {0};
 static uint8_t is_calibrated = 0;
+
+
+void MPU6050_GetHandledData(float *GetYaw, float *GetPitch, float *GetRoll);
+void MPU6050_Pose_Calculate(void);
+void MPU6050_Update(void);
+void MPU6050_CalibrateSensors(void);
+void MPU6050_Kalman_Init(void);
+
+
+/**
+ * @brief MPU6050姿态解算初始化 
+ * 
+ */
+
+ void MPU6050_pose_claculate_Init(void)
+ {
+    MPU6050_Kalman_Init();
+    MPU6050_CalibrateSensors();
+ }
+
+
+/**
+ * @brief 初始化卡尔曼滤波器
+ */
+void MPU6050_Kalman_Init(void)
+{
+    // 初始化俯仰角和横滚角的卡尔曼滤波器
+    // 参数说明：
+    // Q_angle: 角度过程噪声 (0.001-0.1)，值越小滤波器越平滑但响应变慢
+    // Q_bias: 角速度偏差过程噪声 (0.001-0.01)，值越小偏差估计越稳定
+    // R_measure: 测量噪声 (0.01-1.0)，值越大越信任陀螺仪，值越小越信任加速度计
+    
+    Kalman_Init(&kalman_pitch, 0.001f, 0.003f, 0.03f);
+    Kalman_Init(&kalman_roll, 0.001f, 0.003f, 0.03f);
+}
 
 //陀螺仪零漂校准
 void MPU6050_CalibrateSensors(void)
@@ -105,30 +139,27 @@ void MPU6050_Update(void)
 }
 
 
-/**
-* @brief:此函数用来计算MPU6050的俯仰角
-*/
 
+/**
+ * @brief 使用卡尔曼滤波计算姿态角
+ */
 void MPU6050_Pose_Calculate(void)
 {
-	MPU6050_Update();
-	
-	//通过陀螺仪数值计算欧拉角
-	Yaw_g    =   Yaw_g   + GZ_Handle * 0.005;
-	Pitch_g  =   Pitch_g + GY_Handle * 0.005;
-	Roll_g   =   Roll_g  + GX_Handle * 0.005;
-	
-	
-	//通过加速度计数值计算欧拉角
-	Yaw_a   =   0.0f;
-	Pitch_a =   atan2(AY_Handle , AZ_Handle) / 3.1415927f * 180.0f;
-	Roll_a  =   atan2(AX_Handle , AZ_Handle) / 3.1415927f * 180.0f;
-	
-	
-	//使用互补滤波器对陀螺仪和加速度计得计算结果进行融合
-	Yaw     =   Yaw_g;
-	Pitch   = 	ALPHA * Pitch_g + (1 - ALPHA) * Pitch_a;
-	Roll  = 	ALPHA * Roll_g + (1 - ALPHA) * Roll_a;
+    float dt = 0.005f;      //陀螺仪采样间隔
+    
+    MPU6050_Update();
+
+    
+    // 通过加速度计计算角度
+    float pitch_accel = atan2(AY_Handle, AZ_Handle) * 180.0f / 3.1415927f;
+    float roll_accel = atan2(AX_Handle, AZ_Handle) * 180.0f / 3.1415927f;
+    
+    // 使用卡尔曼滤波融合数据
+    Pitch = Kalman_Update(&kalman_pitch, pitch_accel, GY_Handle, dt);
+    Roll = Kalman_Update(&kalman_roll, roll_accel, GX_Handle, dt);
+    
+    // 偏航角仍使用陀螺仪积分（无磁场传感器）
+    Yaw += GZ_Handle * dt;
 	
 }
 

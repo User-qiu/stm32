@@ -788,6 +788,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\MPU\MPU6050_pose_calculate.h</FilePath>
             </File>
+            <File>
+              <FileName>MPU6050_Kalman_Filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\MPU\MPU6050_Kalman_Filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>MPU6050_Kalman_Filter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MPU\MPU6050_Kalman_Filter.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
