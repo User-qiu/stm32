@@ -1,64 +1,70 @@
 #include "stm32f10x.h"                  // Device header
 #include "OLED.h"
-#include "Time.h"
 #include "Serial.h"
-#include "MPU6050.h"
-#include "MPU6050_pose_calculate.h"
+#include "Time.h"
+#include "Motor.h"
+#include "TIM_Encoder.h"
+#include "PID.h"
+#include "Delay.h"
+
+PID_Struct pid;
 
 
-//横滚角、俯仰角、偏航角
-float Roll,Pitch,Yaw;
-
-int main(void)
+//红外反射器测速,返回每秒的转数
+//1ms触发一次
+//每100ms返回一次结果，但是每圈有三次触发【有三片扇叶】
+int16_t Motor_Speed;
+void GetSpeed_Tick(void)
 {
-	OLED_Init();
-	Serial_Init();
-	
-	/*
-	首先MPU6050初始化，
-	接着是MPU6050校正【耗时5s左右，时间较长】，
-	最后是启动定时器，顺序不可改变
-	*/
-	MPU6050_Init();
-	
-	OLED_Clear();
-	OLED_ShowString(1, 1, "MPU校准中", OLED_8X16);
-	OLED_Update();
-	MPU6050_pose_claculate_Init();
-	OLED_Clear();
-	
-	
-	Time_Init();
-	
-	OLED_ShowString(0,(1-1)*16,"MPU6050",OLED_8X16);
-	OLED_ShowString(0,(2-1)*16,"Roll",OLED_8X16);
-	OLED_ShowString(0,(3-1)*16,"Pitch",OLED_8X16);
-	OLED_ShowString(0,(4-1)*16,"Yaw",OLED_8X16);
-	
-	OLED_Update();
-	
-
-	while (1)
+	static uint16_t Speed_Tick = 0;
+	Speed_Tick++;
+	if(Speed_Tick >= 100)
 	{
-		
-		MPU6050_GetHandledData(&Yaw, &Pitch, &Roll);
-		OLED_ShowFloatNum(0+48, (2-1)*16, Roll,  3,3, OLED_8X16);
-		OLED_ShowFloatNum(0+48, (3-1)*16, Pitch, 3,3,  OLED_8X16);
-		OLED_ShowFloatNum(0+48, (4-1)*16, Yaw,   3,3,  OLED_8X16);
-		
-		Serial_Printf("%.3f,%.3f,%.3f\n",Roll,Pitch,Yaw);
-		
-		OLED_Update();
-		
+		Speed_Tick = 0;
+		Motor_Speed = Encoder_GetCounter() * 10 / 3;
 	}
 }
 
-// 中断服务函数模板
-void TIM2_IRQHandler(void)
+
+int main(void)
 {
-	if (TIM_GetITStatus(TIM2,TIM_IT_Update) == SET) {
-		MPU6050_Tick();
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update); // 清除中断标志
+
+	OLED_Init();
+	Serial_Init();
+	Time_Init();
+	Motor_Init();			//直流电机初始化
+	Encoder_Init();			//编码器初始化
+
+
+	// PID_Init(&pid, 1.0f, 0.0f, 0.0f, 10.0f, 50.0f);
+
+	OLED_ShowString(1,1,"Speed",OLED_8X16);
+	OLED_ShowString(1,32,"PWM",OLED_8X16);
+
+	//直电机电流占空比 speed / 100
+	uint8_t speed = 30;
+
+	while(1)
+	{
+		OLED_ShowSignedNum(1, 16, Motor_Speed, 5, OLED_8X16);		//显示电机转速
+
+		OLED_ShowNum(1, 48, speed, 3, OLED_8X16);					//显示电流占空比
+		OLED_Update();
+		Motor_SetSpeed(speed+=30);
+		speed %= 100;
+		Delay_ms(100);
+	}
+
+
+}
+
+
+void TIM4_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
+	{
+		GetSpeed_Tick();
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
 
